@@ -36,10 +36,14 @@ var Pong = function(vsIA, resize){
   this.arrival = 0;
 
   this.init = function(dir){
-    this.speed = 6 + Math.min(25, 0.5*(this.p1 + this.p2));
+    this.speed = 6 + Math.min(20, 0.5*(this.p1 + this.p2));
     this.vx = dir * (0.8 + Math.floor((Math.random() * 6) +1)/10);
     this.vy = 0.4 * (Math.random()>0.5?1:-1);
-    this.x = this.width/2;
+    if(this.vx<0){
+      this.x = this.width-this.border-(2*this.dimX)-1;
+    }else{
+      this.x = this.border+this.dimX+1;
+    }
     this.y = this.height/2;
     this.touched = false;
 
@@ -225,7 +229,7 @@ var Pong = function(vsIA, resize){
 
   this.canvas.addEventListener('mousemove', function(e){
     if(!self.iaPlayL){
-      self.pos1 = e.clientY-self.dimYl/2;
+      self.pos1 = e.clientY-self.canvas.getBoundingClientRect().top-self.dimYl/2;
       self.pos1 = self.pos1>self.height-self.dimYl?self.height-self.dimYl:self.pos1;
     }
   });
@@ -256,7 +260,6 @@ var Pong = function(vsIA, resize){
       self.setFullScreen();
       this.fullScreen = true;
     }
-    console.log(event.which);
   });
 
   window.addEventListener('keyup', function(event){
@@ -278,14 +281,15 @@ var Pong = function(vsIA, resize){
   this.canvas.addEventListener('touchmove', function(event){
     if(event.targetTouches.length == 1 && self.iaPlayR) {
       var touch = event.targetTouches[0];
-      self.pos1=2*(touch.pageY-self.dimYl/2);
+      self.pos1=2*(touch.pageY-self.canvas.getBoundingClientRect().top-self.dimYl/2);
+      //document.getElementById("log").innerHTML += touch.pageY + "<br/>";
     }else{
       if(event.targetTouches.length == 1) {
         var touch = event.targetTouches[0];
         if(touch.pageX<self.width/4){
-          self.pos1=2*(touch.pageY-self.dimYl/2);
+          self.pos1=2*(touch.pageY-self.canvas.getBoundingClientRect().top-self.dimYl/2);
         }else{
-          self.pos2=2*(touch.pageY-self.dimYr/2);
+          self.pos2=2*(touch.pageY-self.canvas.getBoundingClientRect().top-self.dimYr/2);
         }
       }else{
         var touch1 = event.targetTouches[0],
@@ -294,8 +298,8 @@ var Pong = function(vsIA, resize){
           touch1=touch2;
           touch2=event.targetTouches[0];
         }
-        self.pos1=2*(touch1.pageY-self.dimYl/2);
-        self.pos2=2*(touch2.pageY-self.dimYr/2);
+        self.pos1=2*(touch1.pageY-self.canvas.getBoundingClientRect().top-self.dimYl/2);
+        self.pos2=2*(touch2.pageY-self.canvas.getBoundingClientRect().top-self.dimYr/2);
       }
     }
 
